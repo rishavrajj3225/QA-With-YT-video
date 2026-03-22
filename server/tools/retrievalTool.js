@@ -9,7 +9,7 @@ export const createRetrievalTool = (vectorStore) =>
         const results = await vectorStore.similaritySearch(
           query,
           k,
-          (doc) => doc.metadata.id === video_id
+          { id: video_id }
         );
         console.log(video_id);
         return results.map((res) => res.pageContent).join("\n---\n");
