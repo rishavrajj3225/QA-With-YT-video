@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+:root {
+  font-family: "Sora", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  margin: 0;
+}
