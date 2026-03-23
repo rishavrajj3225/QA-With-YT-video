@@ -6,6 +6,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { MemorySaver } from "@langchain/langgraph-checkpoint";
 import data from "./data.js";
+import { triggerYoutube } from "../brightData.js";
 
 const app = express();
 app.use(cors());
@@ -57,6 +58,42 @@ app.post("/query", async (req, res) => {
     console.error("Error processing query:", error);
     res.status(500).json({ error: "An error occurred while processing your query." });
   }
+});
+
+app.post("/brightdata/trigger", async (req, res) => {
+  const { video_url, notify_url, include_errors = true } = req.body;
+
+  if (!video_url) {
+    return res.status(400).json({ error: "video_url is required" });
+  }
+
+  const fallbackNotifyUrl = `${process.env.SERVER_PUBLIC_URL || "http://localhost:4000"}/webhook`;
+  const notifyUrl = notify_url || process.env.BRIGHTDATA_NOTIFY_URL || fallbackNotifyUrl;
+
+  try {
+    const result = await triggerYoutube(video_url, {
+      notifyUrl,
+      includeErrors: include_errors,
+    });
+
+    return res.json({
+      message: "Bright Data trigger submitted",
+      notify_url: notifyUrl,
+      include_errors,
+      result,
+    });
+  } catch (error) {
+    console.error("Error triggering Bright Data:", error?.response?.data || error.message);
+    return res.status(500).json({
+      error: "Failed to trigger Bright Data job",
+      details: error?.response?.data || error.message,
+    });
+  }
+});
+
+app.post("/webhook", (req, res) => {
+  console.log("Received webhook:", req.body);
+  res.status(200).json({ message: "Webhook received successfully" });
 });
 
 const PORT = process.env.PORT || 4000;
