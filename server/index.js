@@ -95,6 +95,10 @@ app.post("/webhook", (req, res) => {
   console.log("Received webhook:", req.body);
   res.status(200).json({ message: "Webhook received successfully" });
 });
+app.post("/test", (req, res) => {
+  console.log("Received test request:");
+  res.status(200).json({ message: "Test endpoint received successfully" });
+});
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
