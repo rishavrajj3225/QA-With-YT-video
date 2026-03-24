@@ -9,8 +9,8 @@ const embeddingModel = new OpenAIEmbeddings({
   configuration: {
     baseURL: "https://openrouter.ai/api/v1",
     defaultHeaders: {
-      "HTTP-Referer": process.env.OPENROUTER_SITE_URL || "http://localhost:3000",
-      "X-Title": process.env.OPENROUTER_APP_NAME || "qa-with-yt-video",
+      "HTTP-Referer": process.env.OPENROUTER_SITE_URL,
+      "X-Title": process.env.OPENROUTER_APP_NAME,
     },
   },
 });
@@ -59,4 +59,16 @@ export const addVideoToVectorStore = async (video) => {
   // Prevent duplicate chunks for the same video on repeated runs.
   await vectorStore.delete({ filter: { id: video.video_id } });
   await vectorStore.addDocuments(chunks);
+};
+
+export const isVideoIndexed = async (videoId) => {
+  if (!videoId) {
+    return false;
+  }
+
+  const results = await vectorStore.similaritySearch("video transcript", 1, {
+    id: videoId,
+  });
+
+  return results.length > 0;
 };

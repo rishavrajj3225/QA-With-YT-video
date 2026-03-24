@@ -8,7 +8,7 @@ export const triggerYoutube = async (videoUrl, options = {}) => {
     notifyUrl,
     includeErrors = true,
     datasetId = DATASET_ID,
-    token = process.env.BRIGHTDATA_API_TOKEN || "a8dc235d-8912-4280-86f7-447301309424",
+    token = process.env.BRIGHTDATA_API_TOKEN,
   } = options;
 
   if (!notifyUrl) {
